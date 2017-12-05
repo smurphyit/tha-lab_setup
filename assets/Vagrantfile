@@ -1,0 +1,151 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure("2") do |config|
+
+### KALI
+  config.vm.define "kali", primary: true do |kali|
+    kali.vm.network "private_network", ip: "172.16.189.5", :adapter => 2, :mac => "080027f34a5d"
+    kali.vm.box = "blackfin/kali"
+    
+    kali.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+    end
+
+    kali.vm.provider "vmware_workstation" do |vmware|
+      vmware.gui = true
+    end
+
+    kali.vm.provider "vmware_desktop" do |vmware|
+      vmware.gui = true
+    end
+    
+    kali.vm.provider "vmware_fusion" do |vmware|
+      vmware.gui = true
+    end
+  end
+
+### VULNERABLE CLIENT
+  config.vm.define "client", autostart: false do |client|
+    client.vm.box = "blackfin/vuln-client"
+    config.ssh.password  = "vagrant"
+    config.ssh.username = "vagrant"
+    client.vm.network "private_network", ip: "172.16.189.52", :mac => "080027958870", :adapter => 2 
+ 
+    config.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+    end
+ 
+    config.vm.provider "vmware_workstation" do |vmware|
+      vmware.gui = true
+    end
+
+    config.vm.provider "vmware_desktop" do |vmware|
+      vmware.gui = true
+    end
+
+    config.vm.provider "vmware_fusion" do |vmware|
+      vmware.gui = true
+    end
+  end
+
+### VULNERABLE SERVER
+  config.vm.define "web", autostart: false do |web|
+    config.ssh.password  = "vagrant"
+    config.ssh.username = "vagrant"
+    web.vm.network "private_network", ip: "172.16.189.100", :mac => "080027658BC4", :adapter => 2 
+    web.vm.box = "blackfin/vuln-server"
+    
+    web.vm.provider "virtualbox" do |vb|
+      vb.gui = true   
+    end
+    
+    web.vm.provider "vmware_workstation" do |vmware|
+      vmware.gui = true
+    end
+    
+    web.vm.provider "vmware_desktop" do |vmware|
+      vmware.gui = true
+    end
+
+    web.vm.provider "vmware_fusion" do |vmware|
+      vmware.gui = true
+    end
+  end
+
+### NETWORK EMULATOR
+  config.vm.define "net", autostart: false do |net|
+    net.vm.network "private_network", ip: "172.16.189.241", :mac => "080027EAD414", :adapter => 2 
+    config.vm.synced_folder '.', '/vagrant', disabled: true
+    config.vm.guest = :freebsd
+    net.vm.box = "blackfin/NetEmu"
+ 
+    net.vm.provider "virtualbox" do |vb|
+      vb.gui = true   
+    end
+
+    net.vm.provider "vmware_workstation" do |vmware|
+      vmware.gui = true
+    end
+ 
+    net.vm.provider "vmware_desktop" do |vmware|
+      vmware.gui = true
+    end
+    
+    net.vm.provider "vmware_fusion" do |vmware|
+      vmware.gui = true
+    end
+  end
+
+### METASPLOITABLE
+  config.vm.define "metasploitable", autostart: false do |metasploitable|
+    config.ssh.password  = "vagrant"
+    config.ssh.username = "vagrant"  
+    metasploitable.vm.box = "blackfin/metasploitable"
+    metasploitable.vm.network "private_network", ip: "172.16.189.131", :adapter => 2
+    
+    metasploitable.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+    end
+    
+    metasploitable.vm.provider "vmware_workstation" do |vmware|
+      vmware.gui = true
+    end
+  
+    metasploitable.vm.provider "vmware_desktop" do |vmware|
+      vmware.gui = true
+    end
+    
+    metasploitable.vm.provider "vmware_fusion" do |vmware|
+      vmware.gui = true
+    end
+  end
+
+### WINDOWS XP (provided by modern.ie)
+  config.vm.define "winxp", autostart: false do |winxp|
+  config.vm.boot_timeout = 60
+    winxp.vm.box = "http://aka.ms/vagrant-xp-ie8"
+    winxp.vm.communicator = "winrm"
+#    winxp.vm.network "private_network", ip: "172.16.189.90", :adapter => 2
+    
+    winxp.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+    end
+  end
+
+### WINDOWS 7 (provided by modern.ie)
+  config.vm.define "win7", autostart: false do |win7|
+  config.vm.boot_timeout = 60
+    win7.vm.communicator = "winrm"
+    win7.vm.box = "http://aka.ms/vagrant-win7-ie11"
+#    win7.vm.network "private_network", ip: "172.16.189.91"
+    
+    win7.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+    end
+  end
+
+end
